@@ -152,17 +152,30 @@ For this reason in 1982 Autoregressive Conditional Heteroscedasticity (\textbf{G
 
 \textbf{ARCH model}
 
-An ARCH(p) model is essentially an AR(p) model applied to the \textbf{conditional variance} of a time series, where p represent the order of the model, the number of past time periods used to predict the current variance at time \(t\). The conditional variance represent the variance at time \(t\), given the information of the variance untill time \(t-1\) , mathematically it is a combination of the unconditional variance and the deviation of squared error from its average value and can be represented by the following equation: 
+An ARCH(p) model is essentially an AR(p) model applied to the \textbf{conditional variance} of a time series, where p represent the order of the model, the number of past time periods used to predict the current variance at time \(t\). The conditional variance represent the variance at time \(t\), given the information of the variance untill time \(t-1\) , mathematically it is a combination of the unconditional variance and the deviation of squared error from its average value . For an ARCH(p) model it  can be represented by the following equation \cite{PalombaGARCH}: 
 \begin{equation}
-\sigma_{t}^{2} = \alpha_{0} + \alpha_{1} y_{t-1}^{2} + \alpha_{2} y_{t-2}^{2} + \cdots + \alpha_{p} y_{t-p}^{2}
+\displaystyle \sigma _{t}^{2}=\alpha _{0}+\alpha _{1}\epsilon _{t-1}^{2}+\cdots +\alpha _{q}\epsilon _{t-q}^{2}=\alpha _{0}+\sum _{i=1}^{q}\alpha _{i}\epsilon _{t-i}^{2}
 \end{equation} 
 Where:
 \begin{itemize}
     \item $\sigma_{t}^{2}$ is the conditional variance at time $t$.
-    \item \(\alpha_{0}\) 
-    \item $y_{t-i}^{2}$ are the squared residuals (errors) from previous periods.
-    \item $\alpha_{0}, \alpha_{1}, \dots, \alpha_{p}$ are the parameters of the model.
+    \item \(\alpha_{0}\) is the unconditional variance of the time series (the base level of volatility)
+    \item $\epsilon _{t-i}^{2}$ are the squared residuals from previous periods.
+    \item $\alpha_{1}, \dots, \alpha_{p}$ are the parameters of the model and measure the sensitivity of the conditional variance $\sigma_{t}^{2}$ to past squared residuals.
 \end{itemize}
+
+Even though conditional variance changes over time, the model can be \textbf{covariance stationary} if the variance of the process stays finite and constant over time. For an ARCH(p) model, this happenswhen the roots of the polynomial $1-A(L)$ fall outside the unit circle, this translates to the condition \cite{PalombaGARCH}: 
+\begin{equation}
+\sum_{i=1}^{p} \alpha_{i} < 1
+\end{equation} 
+where:
+\begin{itemize}
+    \item A(L): is the lag polynomial: \(\alpha_1 L + \alpha_2 L^2 + \cdots + \alpha_q L^q\) 
+    \item L is the \textbf{lag operator}, which shifts values of the time series back by a certain number of periods 
+\end{itemize}
+
+This will ensure that shocks to the system will be dissipated instead of accumulating over time, maintaining a bounded variance.
+
 
 
 
