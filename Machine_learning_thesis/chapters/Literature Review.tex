@@ -141,18 +141,28 @@ Traditional time series models, like ARIMA models, assume costant variance over 
 \text{Var}(\epsilon_t) = \sigma^2 \quad \text{for all } t
 \end{equation}
 However economic time series often shows \textbf{heteroscedasticity}, non-constant variance, that's beacuse  positive and negative news affect the variance
-differently, which is known as the leverage effect. As a consequence the dispersion of residuals changes over time. 
+differently, which is known as the leverage effect. Addittionaly, economic time series often exhibit a behavior that is known as \textbf{volatility clustering}, where the volatility changes over time and its degree shows a tendency to persist. As a consequence, the dispersion of residuals changes over time, resulting in clusters of varying volatility rather than a constant spread.
 \begin{figure}[H] 
     \centering
     \includegraphics[width=0.5\textwidth]{Machine_learning_thesis/Images/Homoscedastic-vs-Heteroscedastic.png}
     \caption{Homoscedastic vs Heteroscedastic time series.} 
     \label{fig:Homoscedastic-vs-Heteroscedastic} 
 \end{figure}
+For this reason in 1982 Autoregressive Conditional Heteroscedasticity (\textbf{GARCH}) model was introduced by Robert Engle \cite{Engle1982}, to account for variance changes in financial time series by modeling the variance as a time-varying process, dependent on past errors. 
 
-For this reason in 1982 Autoregressive Conditional Heteroscedasticity (\textbf{GARCH}) model where introduced by Robert Engle \cite{Engle1982}, to account for variance changes in financial time series by modeling the variance as a time-varying process, dependent on past errors. 
+\textbf{ARCH model}
 
-
-
+An ARCH(p) model is essentially an AR(p) model applied to the \textbf{conditional variance} of a time series, where p represent the order of the model, the number of past time periods used to predict the current variance at time \(t\). The conditional variance represent the variance at time \(t\), given the information of the variance untill time \(t-1\) , mathematically it is a combination of the unconditional variance and the deviation of squared error from its average value and can be represented by the following equation: 
+\begin{equation}
+\sigma_{t}^{2} = \alpha_{0} + \alpha_{1} y_{t-1}^{2} + \alpha_{2} y_{t-2}^{2} + \cdots + \alpha_{p} y_{t-p}^{2}
+\end{equation} 
+Where:
+\begin{itemize}
+    \item $\sigma_{t}^{2}$ is the conditional variance at time $t$.
+    \item \(\alpha_{0}\) 
+    \item $y_{t-i}^{2}$ are the squared residuals (errors) from previous periods.
+    \item $\alpha_{0}, \alpha_{1}, \dots, \alpha_{p}$ are the parameters of the model.
+\end{itemize}
 
 
 
