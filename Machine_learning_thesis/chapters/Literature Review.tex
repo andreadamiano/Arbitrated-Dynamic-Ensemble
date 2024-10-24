@@ -65,6 +65,7 @@ This operation is known as "first differencing",  \(\Delta\), and it is often su
 The total number of differencing is determined by the parameter d, which typically assumes the values 0, 1, 2 as higher differencing can remove too much informations from the data, over-complicating the model. The generalized  ARIMA (Autoregressive Integrated Moving Average) model can be expressed mathematically as \cite{Hung2023}: 
 \begin{equation}
 y_t = c + \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} + \theta_1 \epsilon_{t-1} + \cdots + \theta_q \epsilon_{t-q} + \epsilon_t
+\label{ARIMA equation}
 \end{equation}
 which can be rewritten using backshift notation as:
 \begin{equation}
@@ -134,10 +135,22 @@ where:
     \item \(\omega_t\): is the white noise error term at time t
 \end{itemize}
 
-\subsubsection{GARCH}
-The Generalized Autoregressive Conditional Heteroscedasticity (\textbf{GARCH}) model is a time series model used to model the volatility clustering
+\subsubsection{ARCH/GARCH}
+Traditional time series models, like ARIMA models, assume costant variance over time, \textbf{homoskedasticy} \cite{MeatPrices2023}, indeed, if we look back at the formula of the ARIMA model \eqref{ARIMA equation},  \(\epsilon_t\), the white noise error term at time t is assumed to be normally distributed with mean zero and constant variance, mathematically: 
+\begin{equation}
+\text{Var}(\epsilon_t) = \sigma^2 \quad \text{for all } t
+\end{equation}
+However economic time series often shows \textbf{heteroscedasticity}, non-constant variance, that's beacuse  positive and negative news affect the variance
+differently, which is known as the leverage effect. As a consequence the dispersion of residuals changes over time. 
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.5\textwidth]{Machine_learning_thesis/Images/Homoscedastic-vs-Heteroscedastic.png}
+    \caption{Homoscedastic vs Heteroscedastic time series.} 
+    \label{fig:Homoscedastic-vs-Heteroscedastic} 
+\end{figure}
 
-vsfdds
+For this reason in 1982 Autoregressive Conditional Heteroscedasticity (\textbf{GARCH}) model where introduced by Robert Engle \cite{Engle1982}, to account for variance changes in financial time series by modeling the variance as a time-varying process, dependent on past errors. 
+
 
 
 
