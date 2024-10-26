@@ -7,7 +7,7 @@ Nowadays \textbf{Time series forecasting} has become one, if not the most, cruci
 The history of time series analysis goes back to the late 19th century, with the foundational work of Francis Galton and Karl Pearson on correlation, which then posed the basis for \textbf{George Udny Yule}, a British statistician, to further advance this concepts, developing the idea of regression between two variables X and Y, without relying on the assumption that the two variables were jointly normally distributed \cite{l_kristensen_foundations_2021} and its first known application was in his 1927 with the analysis of sunspots \cite{SILVERMAN198899}, in this paper Yule developed what is now known as an autoregressive time series analysis in order to estiamate the number of sunsposts for a given year as a function of the sunspots of the two preceding years and a presumed random disturbance. This fist model was a building block for the \textbf{ARIMA} (Autoregressive Integrated Moving Average) model, later developed in the 1970s by two mathematicians, George Box and Gwilym Jenkins, in a publication called "Time Series Analysis: Forecasting and Control", with the objective of capturing the underlying patterns in time series data leveraging the three components that compose the model: autoregression, integrated, moving average. \cite{article_2}. The ARIMA model has gained a lot of popularity in the past and was one of the most commonly used approach to time series modeling as they take both long-term trends and sudden shocks into account, and many different variations where developed, to deal with the limitations of the original one, namely the ARIMAX, SARIMA, SARIMAX, VARIMA and VARIMAX models. In modern times, although ARIMA models are still being used, they are considered "classical" approaches and with the technological and statistical advancement new techniques and algorithms have been developed, capable of handling more complexed, high-dimensional, non linear time series data, leveraging machine learning and deep leaning models.
 
 
-\subsection{Classical Models (ARIMA, SARIMA, GARCH)} % Subsection 2.1.1
+\subsection{Classical Models}  % (ARIMA, SARIMA, GARCH)}  Subsection 2.1.1
 \subsubsection{ARIMA models}
 An \textbf{ARIMA} (Autoregressive Integrated Moving Average) model, it's a more sophisticated extension of the simpler \textbf{ARMA} (Auto Regressive Moving Average) model, which combines two concepts: AR (Auto Regressive) and MA (Moving Average). 
 
@@ -152,16 +152,15 @@ For this reason in 1982 Autoregressive Conditional Heteroscedasticity (\textbf{G
 
 \textbf{ARCH model}
 
-An ARCH(p) model is essentially an AR(p) model applied to the \textbf{conditional variance} of a time series, where p represent the order of the model, the number of past time periods used to predict the current variance at time \(t\). The conditional variance represent the variance at time \(t\), given the information of the variance untill time \(t-1\) , mathematically it is a combination of the unconditional variance and the deviation of squared error from its average value . For an ARCH(p) model it  can be represented by the following equation \cite{PalombaGARCH}: 
+An \textbf{ARCH(p)} model is essentially an AR(p) model applied to the \textbf{conditional variance} of a time series, where p represent the order of the model, the number of past time periods used to predict the current variance at time \(t\). The conditional variance represent the variance at time \(t\), given the information of the variance untill time \(t-1\) , mathematically it is a combination of the unconditional variance and the deviation of squared error from its average value . For an ARCH(p) model it  can be represented by the following equation \cite{PalombaGARCH}: 
 \begin{equation}
 \displaystyle \sigma _{t}^{2}=\alpha _{0}+\alpha _{1}\epsilon _{t-1}^{2}+\cdots +\alpha _{q}\epsilon _{t-q}^{2}=\alpha _{0}+\sum _{i=1}^{q}\alpha _{i}\epsilon _{t-i}^{2}
 \end{equation} 
 Where:
 \begin{itemize}
     \item $\sigma_{t}^{2}$ is the conditional variance at time $t$.
-    \item \(\alpha_{0}\) is the unconditional variance of the time series (the base level of volatility)
     \item $\epsilon _{t-i}^{2}$ are the squared residuals from previous periods.
-    \item $\alpha_{1}, \dots, \alpha_{p}$ are the parameters of the model and measure the sensitivity of the conditional variance $\sigma_{t}^{2}$ to past squared residuals.
+    \item $\alpha_{0}, \dots, \alpha_{p}$ are the parameters of the model and measure the sensitivity of the conditional variance $\sigma_{t}^{2}$ to past squared residuals.
 \end{itemize}
 
 Even though conditional variance changes over time, the model can be \textbf{covariance stationary} if the variance of the process stays finite and constant over time. For an ARCH(p) model, this happenswhen the roots of the polynomial $1-A(L)$ fall outside the unit circle, this translates to the condition \cite{PalombaGARCH}: 
@@ -174,21 +173,66 @@ where:
     \item L is the \textbf{lag operator}, which shifts values of the time series back by a certain number of periods 
 \end{itemize}
 
-This will ensure that shocks to the system will be dissipated instead of accumulating over time, maintaining a bounded variance.
+This will ensure that shocks to the system will be dissipated instead of accumulating over time, maintaining a bounded variance and ensuring that the unconditional variance exists, assuming this value: 
+\begin{equation}
+\text{Var}(\epsilon_t) = \frac{\alpha _{0}}{1 - \sum_{i=1}^{q} \alpha_i}
+\end{equation} 
+
+
+\textbf{GARCH model}
+
+In practice, only rather rich ARCH parameterizations are able to fit financial series adequately, however, largely parameterized models can be difficult to estimate and can bring to instability during forecasting. The Generalized Autoregressive Conditional Heteroskedasticity (GARCH) model was introduced by Tim Bollerslev in 1986 \cite{Bollerslev1986} and expands upon the ARCH model by enabling a more parsimonious approach to analyzing time-varying volatility in financial series without estimating an overly complex parameter structure. 
+
+Unlike ARCH, which uses an autoregressive model of the past squared errors to capture volatility, the GARCH model extends this by adding the past conditional variance alongside the past squares. This is represented as a \textbf{GARCH(p, q)} model, where p and q are orders for the autoregressive and moving average terms in the variance equation, respectively. The general form for the conditional variance, \(\sigma _{t}^{2}\) , in a GARCH(p, q) model is:
+\begin{equation}
+\sigma_{t}^{2} = \alpha_{0} + \sum_{i=1}^{p} \alpha_{i} \epsilon_{t-i}^{2} + \sum_{j=1}^{q} \beta_{j} \sigma_{t-j}^{2}
+\end{equation} 
+Where: 
+\begin{itemize}
+    \item $\alpha_{i}$ coefficients scale past squared error terms $\epsilon_{t-i}^{2}$.
+    \item $\beta_{j}$ coefficients scale past conditional variances $\sigma_{t-j}^{2}$.
+\end{itemize}
+
+The GARCH(p, q) model is covariance stationary when the roots of the polynomial \(1 - A(L) - B(L)\) fall outside the unit circle. This results in the following condition: 
+\begin{equation}
+\sum_{i=1}^{q} \alpha_{i} + \sum_{j=1}^{p} \beta_{j} < 1
+\end{equation} 
+with all parameters \(\alpha_{0}, \alpha_{i}, \beta_{i}\) being non-negative. When this condition holds, the unconditional variance of the innovation is: 
+\begin{equation}
+\operatorname{Var}(\epsilon_{t}) = \frac{\omega}{1 - \sum_{i=1}^{q} \alpha_{i} - \sum_{j=1}^{p} \beta_{j}}
+\end{equation}
+
+
+\subsection{Machine Learning models} % (Random Forest, XGBoost, LightGBM)} Subsection 2.1.2
+\subsubsection{Random Forest}
+A Random Forest model, also referred to as a random decision forest, is an ensemble learning model (which will be discussed in more details in the section \ref{Sec: ensemble learnign}), introduced for the first time by Ho in 1995 \cite{Ho1995}, however it was Breiman who significantly advanced the methodology in 2001 \cite{Breiman2001} who published a version that is modified and being currently used. The model developed by Leo Breiman consists of a group of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is then made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble. Each tree is grown as described:
+\begin{itemize}
+    \item By Sampling N randomly, If the number of cases
+in the training set is N but with replacement, from
+the original data. This sample will be used as the
+training set for growing the tree.
+\item For M number of input variables, the variable m
+is selected such that m<<M is specified at each
+node, m variables are selected at random out of
+the M and the best split on these m is used for
+splitting the node. During the forest growing, the
+value of m is held constant.
+\item Each tree is grown to the largest possible extent and no pruning is used.
+\end{itemize}
+
+Random Forest generally exhibits a significant performance improvement as compared to single tree. 
+
+\textbf{Decision tree}
 
 
 
 
-
-
-
-\subsection{Machine Learning for Time Series (Random Forest, XGBoost, LightGBM)} % Subsection 2.1.2
-% Content for machine learning models
 
 \subsection{Advances in Deep Learning (LSTM, GRU, CNN)} % Subsection 2.1.3
 % Content for deep learning models
 
 \section{Modern Ensemble Techniques in Time Series} % Section 2.2
+\label{Sec: ensemble learnign}
 
 \subsection{Stacking and Blending Methods} % Subsection 2.2.1
 % Content for stacking and blending methods
