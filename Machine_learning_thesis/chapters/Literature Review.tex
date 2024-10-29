@@ -96,7 +96,6 @@ The original model used an iterative three-stage modeling approach:
             \item Plotting the mean and variance of residuals over time.
             \item Performing a Ljung–Box test.
             \item Plotting the autocorrelation and partial autocorrelation of the residuals.
-
     \end{itemize}
     \item \textbf{Model Refinement}: if the estimation is inadequate, return to step one and attempt to build a better model.
 \end{enumerate}
@@ -205,34 +204,124 @@ with all parameters \(\alpha_{0}, \alpha_{i}, \beta_{i}\) being non-negative. Wh
 
 \subsection{Machine Learning models} % (Random Forest, XGBoost, LightGBM)} Subsection 2.1.2
 \subsubsection{Random Forest}
-A Random Forest model, also referred to as a random decision forest, is an ensemble learning model (which will be discussed in more details in the section \ref{Sec: ensemble learnign}), introduced for the first time by Ho in 1995 \cite{Ho1995}, however it was Breiman who significantly advanced the methodology in 2001 \cite{Breiman2001} who published a version that is modified and being currently used. The model developed by Leo Breiman consists of a group of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is then made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble. Each tree is grown as described:
+\label{Sec: Random Forest}
+A Random Forest model, also referred to as Random Decision Forest, is an ensemble learning model (which will be discussed in more details in the section \ref{Sec: ensemble learning}), introduced for the first time by Ho in 1995 \cite{Ho1995}, however it was Breiman who significantly advanced the methodology in 2001 \cite{Breiman2001} publishing a version that is modified and being currently used. The model developed by Leo Breiman consists of a group of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is then made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble. Each tree is grown as described:
 \begin{itemize}
-    \item By Sampling N randomly, If the number of cases
-in the training set is N but with replacement, from
-the original data. This sample will be used as the
-training set for growing the tree.
-\item For M number of input variables, the variable m
-is selected such that m<<M is specified at each
-node, m variables are selected at random out of
-the M and the best split on these m is used for
-splitting the node. During the forest growing, the
-value of m is held constant.
-\item Each tree is grown to the largest possible extent and no pruning is used.
+\item \textbf{Random Sampling with Replacement}: N instances will be randomly sampled from the original dataset, with replacement, meaning that some instances may appear multiple times in a single sample, while others may be omitted. This sample will then be used as the training set for growing the tree.
+\item \textbf{Random Feature Selection (Feature Bagging)}: For M input variables, a subset of features m is selected (such that $m<<M$) at each split for each tree, the best split will be then selected using the m features instead of the whole M input variables. This will reduce the correlation between trees making the ensemble more robust to noise.
+\item \textbf{Tree Growth Without Pruning}: each tree is grown to the largest possible extent and no pruning is used.
 \end{itemize}
 
-Random Forest generally exhibits a significant performance improvement as compared to single tree. 
+Random Forest generally exhibits a significant performance improvement compared to a single decision tree \cite{Sharma2015}. 
 
-\textbf{Decision tree}
+\textbf{Regression tree}
+
+Regression trees are obtained using a \textbf{greedy}, divide and conquer algorithm that recursively partitions the given training data into smaller subsets, to minimize the prediction errors. This process, also referred to as \textbf{top-down induction} of decision trees can be described by the following procedure: 
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, colframe=white, boxrule=0pt]
+\begin{algorithm}[H]
+    \caption{Top-down induction of decision trees}
+    \label{alg:tree_construction}
+    \begin{enumerate}
+        \item In the initialization phase, each observation is placed in the root node of the tree. The root is included in the list \( L \) of active nodes.
+        \item If the list \( L \) is empty, the procedure is stopped; otherwise, a node \( J \) belonging to the list \( L \) is selected, removed from the list, and used as the node for analysis.
+        \item The optimal rule to split the observations contained in \( J \) is then determined, based on an appropriate preset criterion. The splitting rule generated in this way is then applied, and descendant nodes are constructed by subdividing the observations contained in \( J \). 
+        \begin{enumerate}
+            \item For each descendant node, the conditions for stopping the subdivision are verified. 
+            \item If these conditions are met, node \( J \) becomes a leaf and the value assigned to it is the mean of the target values of the observations contained in \( J \). 
+            \item Otherwise, the descendant nodes are added to the list \( L \). Finally, step 2 is repeated.
+        \end{enumerate}
+    \end{enumerate}
+\end{algorithm}
+\end{tcolorbox}
+
+The procedure above is a general framework and requires some additional steps to be specified before deriving an implementable regression algorithm:
+\begin{itemize}
+    \item \textbf{Splitting Rules:} For each node of the tree, it is necessary to specify the criteria used to identify the optimal rule for splitting the observations and for creating the descendant nodes. There are several alternative criteria, which differ in the number of descendants, the number of attributes, and the evaluation metrics.
+    \item \textbf{Stopping Criteria:} At each node of the tree, different stopping criteria are applied to establish whether the development should be continued recursively or if the node should be considered a leaf. Various criteria have been proposed for this purpose, resulting in quite different topologies of the generated trees, even if all other elements are held constant.
+    \item \textbf{Pruning Criteria:} Finally, it is appropriate to apply pruning criteria to avoid excessive growth of the tree during the development phase (\textit{pre-pruning}) and to reduce the number of nodes after the tree has been generated (\textit{post-pruning}).
+\end{itemize}
+
+The trees that are usually employed in Random Forest models are \textbf{binary}, \textbf{univariate} decision trees (as described in the following papers \cite{Cutler2011}, \cite{Bernard2009}, \cite {Geurts2006}) as they offer a good balance between interpretability and predictive accuracy, and help prevent overfitting in noisy or high-dimensional datasets. These trees partition the predictor space using a sequence of binary partitions (“splits”) on individual variables.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.5\textwidth]{Machine_learning_thesis/Images/regression tree.png}
+    \caption{Example of a regression tree.} 
+    \label{fig:Regression tree} 
+\end{figure}
+For a continuous predictor variable, a split is determined by a split-point; points for which the predictor is smaller than the split-point go to the left, the rest go to the right. 
+\begin{figure}[H] 
+    \centering
+    \begin{tikzpicture}
+        \node[anchor=center] (img) {
+            \includegraphics[width=0.3\textwidth]{Machine_learning_thesis/Images/Continuous variable split.png}
+        };
+        % Overlay a semi-transparent white rectangle
+        \fill[white, opacity=0.2] (img.south west) rectangle (img.north east);
+    \end{tikzpicture}
+    \caption{Splitting on a continuous predictor variable $X_i$, using split-point $c$.} 
+    \label{fig:split of a continuous variable} 
+\end{figure}
+The criterion used to determined the best split is the maximization of the \textbf{information gain},  $\Delta$, which is defined as: 
+\begin{equation}
+\Delta(q, q_1, q_2, \ldots, q_K) = I(q) - I(q_1, q_2, \ldots, q_K) = I(q) - \sum_{k=1}^{K}\frac{Q_k}{Q} I(q_k)
+\end{equation}
+Where: 
+\begin{itemize}
+    \item $I(q)$: represent the impurity index of the parent node
+    \item $I(q_1, q_2, \ldots, q_K)$: represent the impurity index of the split, which is equal to the weighted sum of the impurities of each descendant node (which in the context of binary trees will be two), where each weight equals to the percentage of examples from the parent node that are placed in the corresponding descendant.  
+\end{itemize}
+
+The \textbf{heterogeneity index} (or impurity index) $I(q)$ of a node for a regression tree is a function of the variability of the target values for the examples at the node, and it has to satisfy three requirements: 
+\begin{itemize}
+    \item it must take its maximum value when the examples at the node are distributed homogeneously with respect to the target variable.
+    \item it must take its minimum value when all the instances at the node assume the same target value.
+    \item it must be a symmetric function with respect to the distribution of target values in the node.
+\end{itemize}
+
+A measure of the heterogeneity index, for regression trees, is the mean squared error: 
+\begin{equation}
+    I(q) = \sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (y_i - \bar{y})^2
+\end{equation}
+Although pruning is important to prevent over-fitting for stand-alone trees, it is not used in Random Forests.
+
+\textbf{Random Forest}
+As mentioned before at the beginning of section \ref{Sec: Random Forest}, a Random Forest uses trees as base learners. Random forests are based on the concept of \textbf{bagging}, where each tree is fit to an independent \textbf{bootstrap sample} from the original data and the final prediction is obtained by averaging the results of each tree's prediction. Random Forest enhance bagging by introducing an additional level of randomness: when splitting a node, the best split is found over a randomly selected subset of $m$ predictor variables instead of all $M$ predictors, independently at each node. Two notable variations of this idea include \textbf{Forest-RI} (Random Input selection) and \textbf{Forest-RC} (Random Linear Combination selection):
+\begin{itemize}
+    \item Forest-RI: it randomly selects at each node, $m << M$ attributes ($m$ is fixed) as candidates for the split at the node. There is still correlation between the trees because they are based on the same observations. 
+    \item Forest-RC: it represent a more radical approach, instead of using the original attributes, this method performs a perturbation which is even greater than the original dataset. It creates new attributes that are random linear combination of the existing attributes. In this way it is possible to reduce the correlation between the individual classifiers/trees. 
+\end{itemize}
+
+The process can be summirez by the following algorithm:
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{Random Forest}
+        \label{alg:random_forest}
+        Let $\mathscr{D} = {(x1, y1),...,(xN, yN)}$ denote the training data, with $xi = (xi,1,..., xi,p)^T$. 
+        For $j = 1$ to $J$:
+        \begin{enumerate}
+            \item Take a bootstrap sample $\mathscr{D}_j$ of size $N$ from $\mathscr{D}$.
+            \item Using the bootstrap sample $\mathscr{D}_j$ as the training data, fit a tree using binary recursive partitioning (Algorithm \ref{alg:tree_construction}).
+            \begin{enumerate}
+                \item Select m predictors at random from the p available predictors.
+                \item Find the best binary split among all binary splits on the m predictors from step (a).
+                \item Split the node into two descendant nodes using the split from step (b).
+            \end{enumerate}
+            \item Make a prediction at a new point $x$: 
+            \[
+                \hat{f}(x) = \frac{1}{J} \sum_{j=1}^{J} \hat{h}_j(x)
+            \]
+        \end{enumerate}
+    \end{algorithm}
+\end{tcolorbox}
+
+\subsubsection{}
 
 
-
-
-
-\subsection{Advances in Deep Learning (LSTM, GRU, CNN)} % Subsection 2.1.3
+\subsection{Advances in Deep Learning} %(LSTM, GRU, CNN)} Subsection 2.1.3
 % Content for deep learning models
 
 \section{Modern Ensemble Techniques in Time Series} % Section 2.2
-\label{Sec: ensemble learnign}
+\label{Sec: ensemble learning}
 
 \subsection{Stacking and Blending Methods} % Subsection 2.2.1
 % Content for stacking and blending methods
