@@ -203,6 +203,8 @@ with all parameters \(\alpha_{0}, \alpha_{i}, \beta_{i}\) being non-negative. Wh
 
 
 \subsection{Machine Learning models} % (Random Forest, XGBoost, LightGBM)} Subsection 2.1.2
+Classical time series model, such as ARIMA and GARCH, often require specific statistical assumptions, such as stationarity of data, and if the data it's not stationary, these models usually require trasformations to stabilize variance and mean, such as differencing, to make the time series stationary. In contrast machine learning model(especially tree-base models, such as XGBooost and Ranodom Forests) are more flexible and can capture complex, non-linear patterns and dependencies in the data without requiring strict assumptions about the data's statistical properties. Study comparing ARIMA models to machine learning models show that while the first performs better in highly structured and stationary settings,the latter often delivers superior performance in dynamic environments \cite{Kontopoulou2023}.
+
 \subsubsection{Random Forest}
 \label{Sec: Random Forest}
 A Random Forest model, also referred to as Random Decision Forest, is an ensemble learning model (which will be discussed in more details in the section \ref{Sec: ensemble learning}), introduced for the first time by Ho in 1995 \cite{Ho1995}, however it was Breiman who significantly advanced the methodology in 2001 \cite{Breiman2001} publishing a version that is modified and being currently used. The model developed by Leo Breiman consists of a group of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is then made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble. Each tree is grown as described:
@@ -314,7 +316,103 @@ The process can be summirez by the following algorithm:
     \end{algorithm}
 \end{tcolorbox}
 
-\subsubsection{}
+\subsubsection{XGBoost}
+
+\textbf{Gradient Boosting} is an ensemble machine learning technique, developed by \textbf{Jerome H. Friedman}, a statistician at Stanford University, who formalized the concept in his 2001 paper, "Greedy Function Approximation: A Gradient Boosting Machine." \cite{Friedman2001}, that consist in building multiple weak learners sequentially (typically decision trees), with each new model correcting the errors of its predecessor by placing more weights on instances with erroneous predictions, gradually minimizing a loss function. Friedman’s Gradient Boosting algorithm, often called the \textbf{Gradient Boosting Machine} (GBM), uses the gradient of a loss function, $\psi(y, f)$, to guide the correction process, iteratively estimating new models in order to optimize the predictions and minimize the loss. At each step the algorithm compute the \textbf{negative gradient} of the loss function with respect to the current model $f_{t-1}(x)$ to obtain the residual errors. This negative gradient, $g_t(x_i)$, represent the the direction in which the model should adjust to reduce loss:
+\[
+    g_t(x_i) = -\left.\frac{\partial \psi(y_i, f(x_i))}{\partial f(x_i)}\right|_{f(x_i) = f_{t-1}(x_i)}
+\]
+The objectibve of the algorithm developed by Friedmann is to add a new model, $h_t(x)$, at each step $t$, that minimizes the residual errors of the current ensemble model $f_{t-1}(x)$ and the negative gradient,  $g_t(x_i)$, of the loss function evaluated at the current model serves as a proxy for these residuals. The algorithm can be summarized by the following:
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{Friedman’s Gradient Boost algorithm}
+        \label{alg:gradient boosting}
+        \textbf{Inputs:}
+        \begin{itemize}
+            \item input data $(x, y)_{i=1}^{N}$
+            \item number of iterations $M$
+            \item choice of the loss-function $\psi(y, f)$
+            \item choice of the base-learner model $m(x, \theta)$
+        \end{itemize}
+
+        \textbf{Algorithm:}
+        \begin{enumerate}
+            \item initialize $\hat{f}_0$ with a constant, often  $c=mean(y)$ for regression tasks
+            
+        For $t=1$ to $M$ steps
+            
+            \item compute the negative gradient $g_t(x_i)$ for each istance $i$
+            \item fit a new base-learner function $m(x, \theta_t)$ on the negative gradients $g_t(x_i)$ to approximate them.
+            \item find the best gradient descent step-size $\rho_t$:
+            \[
+            \rho_t = \arg \min_{\rho} \sum_{i=1}^{N} \psi[( y_i, \hat{f}_{t-1}(x_i) +\rho m(x_i, \theta_t) ]
+            \]
+            \item update of the function estimate:
+            \[
+            \hat{f}_t \leftarrow \hat{f}_{t-1} + \rho_t m(x, \theta_t)
+            \]
+        \end{enumerate}
+    \end{algorithm}
+\end{tcolorbox}
+
+
+
+\textbf{XGBoost} 
+
+The Extreme Gradient Boosting (XGBoost) model is a popular implementation of the Gradient Boosting general framework previously described. It was developed by \textbf{Tianqi Chen}, who introduced the model in a seminal paper titled "XGBoost: A Scalable Tree Boosting System" \cite{chen2016xgboost}. It builds on the traditional Gradient Boosting by introducing some additional features:
+\begin{enumerate}
+    \item \textbf{Regularization in the objective function}: the objective function include some additional regularization terms to prevent overfitting: 
+    \[
+    \psi(y, f) = \sum_{i} l(y_i, \hat{y}_i) + \sum_{k} \Omega(m_k)
+    \]
+    Where: 
+    \begin{itemize}
+        \addtolength{\leftskip}{2em}
+        \item $l(y_i, \hat{y}_i)$ is the original loss function also present in standard Gradient Boosting.
+        \item $\sum_{k} \Omega(m_k)$ is a regularization function applied to each tree $h_k$ in the model.
+    \end{itemize}
+
+    $\Omega$ is a regularization parameter that penalizes the complexity of each tree booster, taking the form:
+    \[
+    \Omega(m_k) = \gamma T + \frac{1}{2} \lambda \|w\|^2
+    \]
+    Where: 
+    \begin{itemize}
+        \addtolength{\leftskip}{2em}
+        \item $T$ is the number of leaf nodes
+        \item $\|w\|^2$ is the squared sum of the leaf prediction values
+        \item $\gamma$ penalizes the number of leaf nodes
+        \item $\lambda$ is the L-2 regularization parameter for leaf predicted values
+    \end{itemize}
+
+    \item \textbf{Second order Gradietn aproximation}: XGBoost uses \textbf{Newton’s method}, rather than gradient descent, to guide each round of boosting. Suppose that we have already fitted $t-1$ models, if we add a new tree booster $m_t$ to our model, the objective function would be: 
+    \[
+    L^{(t)} = \sum_{i=1}^n l(y_i, \hat{y}_i^{(t-1)} + m_t(\mathbf{x}_i)) + \Omega(H_t)
+    \]
+    So in order to choose a model $h_t$ that reduces the loss we want: 
+    \[
+    l(y_i, \hat{y}_i^{(t-1)} + m_t(\mathbf{x}_i)) \le l(y_i, \hat{y}_i^{(t-1)})
+    \]
+    which can be approximied by the second order Taylor series around the point $\hat{y}_i^{(t-1)}$:
+    \[
+    l(y_i, \hat{y}_i^{(t-1)} + m_t(\mathbf{x}_i)) \approx l(y_i, \hat{y}_i^{(t-1)}) + g_i m_t(\mathbf{x}_i) + \frac{1}{2} h_i m_t(\mathbf{x}_i)^2
+    \]
+    Where: 
+    \begin{itemize}
+        \addtolength{\leftskip}{2em}
+        \item $g_i = \frac{\partial}{\partial \hat{y}_i^{(t-1)}} l(y_i, \hat{y}_i^{(t-1)})$ is the first order partial derivative, the \textbf{gradient}.
+        \item $h_i = \frac{\partial}{\partial^2 \hat{y}_i^{(t-1)}} l(y_i, \hat{y}_i^{(t-1)})$ si the second order partial derivative, the  \textbf{hessian}.
+    \end{itemize}
+
+    \item \textbf{Missing Values and Sparsity-Aware Split Finding}: XGBoost introduces a modified algorithm for tree split finding which explicitly handles missing feature values. If some feature values are missing, the XGBoost split finding algorithm scores each threshold twice: once with missing value instances in the left node and once with them in the right node. The best split will then specify both the threshold value and to which node instances with missing values should be assigned. 
+
+    \item \textbf{Preventing Further Splitting}: XGBoost offers some additional parameter for limiting tree splitting, preventing overfitting, a key one being the \texttt{minimum child weight} parameter, which specifies the minimum sum of the instance weights (the Hessians) in a child node.
+
+    \item \textbf{Sampling}: XGBoost introduces both column and row subsampling, which can prevent overfitting and reduce training time by limiting the amount of data to be processed during boosting.
+
+    \item \textbf{Scalability}: XGBoost is highly scalable thanks to the efficient, parallelizable, and distributable methods for growing trees. It allows infact to choose from different tree growth methods through the \texttt{tree\_method} parameter, which allows to choose between the greedy exact algorithm and the approximate algorithm, which offers various scalability-related functionality as the ability to consider only a small number of candidate split points instead of trying all possible splits. 
+        
+\end{enumerate} 
 
 
 \subsection{Advances in Deep Learning} %(LSTM, GRU, CNN)} Subsection 2.1.3
