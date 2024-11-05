@@ -416,7 +416,62 @@ The Extreme Gradient Boosting (XGBoost) model is a popular implementation of the
 
 
 \subsection{Advances in Deep Learning} %(LSTM, GRU, CNN)} Subsection 2.1.3
-% Content for deep learning models
+Deep learning is a subset of machine learning that uses artificial neural networks to process and analyze information. 
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.4\textwidth]{Machine_learning_thesis/Images/deep learning and machine learning.png}
+    \caption{Artificial intelligence, machine learning and deep learning.} 
+    \label{fig:Artificial intelligence, machine learning and deep learning} 
+\end{figure}
+
+\textbf{Perceptron}
+
+The perceptron, developed by Frank Rosenblatt in 1958 \cite{rosenblatt1958perceptron}, marked the birth of neural networks. It is the simplest form of neural network and corresponds to a single neuron that receives as input the values $(x_1, x_2, \dots, x_n)$ along the incoming connections, and returns an output value $f(x)$.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.4\textwidth]{Machine_learning_thesis/Images/Rosenblatt perceptron.png}
+    \caption{Rosenblatt perceptron.} 
+    \label{fig:Rosenblatt perceptron} 
+\end{figure}
+Where the input values represent the values of the explanatory attributes and the output represent the prediction of the response variable $y$. The prediction for a new observation $x$ is then derived by performing the following steps:
+\begin{enumerate}
+    \item Each new observation $x = {x1, x2, \dots, xn}$ is associated with a weight $w = {w1, w2, \dots, wn}$ and a bias term $\theta$, called distortion. The perceptron firstly compute the \textbf{weighted linear combination} of the values of the explanatory variables for the new observation and the distortion is subtracted from it:
+    \[
+    w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta = \mathbf{w}' \mathbf{x} - \vartheta
+    \]
+    \item The prediction $f(x)$ is then obtained by applying an \textbf{activation function} $g$ to the linear combination of the predictors, we get:
+    \[
+    f(\mathbf{x}) = g(w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta) = g(\mathbf{w}' \mathbf{x} - \vartheta)
+    \]
+    The activation function $g$ serves two purposes:
+    \begin{itemize}
+        \addtolength{\leftskip}{2em}
+        \item map the linear combination into the set $\mathcal{H} = {v1, v2, \dots, vn}$ of the values assumed by the target variable. 
+        \item introduce non-linearity to help the network learn complex representations. 
+    \end{itemize}
+    Two of the most commonly used activation fuction for hidden layers in multi-layer feed-forward networks (which will be described next) are the ReLu (Rectified Linear Unit) and the Tanh (Hyperbolic Tangent) functions, which can be described by the following equations:     
+    \[
+    f(z) = \max(0, z)
+    \]
+    \[
+    f(z) = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+    \]
+    \begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.4\textwidth]{Machine_learning_thesis/Images/Tanh-and-ReLU-activation-functions.png}
+    \caption{Tanh and ReLU activation functions.} 
+    \label{fig:Tanh and ReLU activation functions} 
+\end{figure}
+    For binary classification problems it is possible to give a geometrical interpretation of the prediction obtained using a Rosenblatt perceptron. Indeed, if we place the �� observations of the training dataset in the space ℝ��, the weighted linear combination in (*) calculated for ����
+     expresses the slack between the observation and the hyperplane:
+     �� = ��1��1 + ��2��2 + ⋯ + �������� − �� = ��′�� − ��
+    The purpose of the activation function ��(·) = ������(·) is therefore to establish if the point associated with the example ���� is placed in the lower or upper halfspace with respect to the separating hyperplane. Hence, the Rosenblatt perceptron corresponds to a linear separation of the observations based on the target class. The aim of the iterative procedure is therefore to determine the coefficients of the separating hyperplane. 
+
+\end{enumerate}
+
+
+
+Neural networks were first proposed in 1944 by Warren McCullough and Walter Pitts, two University of Chicago researchers 
 
 \section{Modern Ensemble Techniques in Time Series} % Section 2.2
 \label{Sec: ensemble learning}
