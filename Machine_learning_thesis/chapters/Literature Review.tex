@@ -1,13 +1,11 @@
 \chapter{Literature Review}
 
-\section{Evolution of Time Series Forecasting} % Section 2.1
-
-
+\section{Evolution of Time Series Forecasting}
 Nowadays \textbf{Time series forecasting} has become one, if not the most, crucial tool used in decision-making and strategic planning processes across a wide range of industries such as finance, economics, environmental science, and healthcare \cite{article}. The extensive use of time series analysis in many different industries can be attributed to its ability in examining past data, detecting hidden pattern, trends and seasonality and providing insightful forecasts, which is particularly important for the businesses in order to react and prepare for upcoming events. The methodologies used has changed considerably over the years thanks to the technological innovation, in  particular, the key drivers that have spurred the progress in time series analysis have been the increase of data availability and data volume, which have been pushed by the the rise of social media, Internet of Things (IoT), and multimedia, along with the growth of cloud computing, a powerful technology that enables to perform massive-scale and complex computing eliminating the need to purchase and maintain expensive computing hardware, dedicated space, and software\cite{HASHEM201598}.
 The history of time series analysis goes back to the late 19th century, with the foundational work of Francis Galton and Karl Pearson on correlation, which then posed the basis for \textbf{George Udny Yule}, a British statistician, to further advance this concepts, developing the idea of regression between two variables X and Y, without relying on the assumption that the two variables were jointly normally distributed \cite{l_kristensen_foundations_2021} and its first known application was in his 1927 with the analysis of sunspots \cite{SILVERMAN198899}, in this paper Yule developed what is now known as an autoregressive time series analysis in order to estiamate the number of sunsposts for a given year as a function of the sunspots of the two preceding years and a presumed random disturbance. This fist model was a building block for the \textbf{ARIMA} (Autoregressive Integrated Moving Average) model, later developed in the 1970s by two mathematicians, George Box and Gwilym Jenkins, in a publication called "Time Series Analysis: Forecasting and Control", with the objective of capturing the underlying patterns in time series data leveraging the three components that compose the model: autoregression, integrated, moving average. \cite{article_2}. The ARIMA model has gained a lot of popularity in the past and was one of the most commonly used approach to time series modeling as they take both long-term trends and sudden shocks into account, and many different variations where developed, to deal with the limitations of the original one, namely the ARIMAX, SARIMA, SARIMAX, VARIMA and VARIMAX models. In modern times, although ARIMA models are still being used, they are considered "classical" approaches and with the technological and statistical advancement new techniques and algorithms have been developed, capable of handling more complexed, high-dimensional, non linear time series data, leveraging machine learning and deep leaning models.
 
 
-\subsection{Classical Models}  % (ARIMA, SARIMA, GARCH)}  Subsection 2.1.1
+\subsection{Classical Models}  % (ARIMA, SARIMA, GARCH)}  
 \subsubsection{ARIMA models}
 An \textbf{ARIMA} (Autoregressive Integrated Moving Average) model, it's a more sophisticated extension of the simpler \textbf{ARMA} (Auto Regressive Moving Average) model, which combines two concepts: AR (Auto Regressive) and MA (Moving Average). 
 
@@ -62,7 +60,7 @@ This operation is known as "first differencing",  \(\Delta\), and it is often su
 \begin{equation}
  y_t'' = (y_t - y_{t-1}) - (y_{t-1} - y_{t-2}) = y_t - 2y_{t-1} + y_{t-2}
 \end{equation}
-The total number of differencing is determined by the parameter d, which typically assumes the values 0, 1, 2 as higher differencing can remove too much informations from the data, over-complicating the model. The generalized  ARIMA (Autoregressive Integrated Moving Average) model can be expressed mathematically as \cite{Hung2023}: 
+The total number of differencing is determined by the parameter d, which typically assumes the values 0, 1, 2 as higher differencing can remove too much information from the data, over-complicating the model. The generalized  ARIMA (Autoregressive Integrated Moving Average) model can be expressed mathematically as \cite{Hung2023}: 
 \begin{equation}
 y_t = c + \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} + \theta_1 \epsilon_{t-1} + \cdots + \theta_q \epsilon_{t-q} + \epsilon_t
 \label{ARIMA equation}
@@ -415,18 +413,18 @@ The Extreme Gradient Boosting (XGBoost) model is a popular implementation of the
 \end{enumerate} 
 
 
-\subsection{Advances in Deep Learning} %(LSTM, GRU, CNN)} Subsection 2.1.3
+\subsection{Advances in Deep Learning} %(LSTM, GRU, CNN)}
 Deep learning is a subset of machine learning that uses artificial neural networks to process and analyze information. 
 \begin{figure}[H] 
     \centering
-    \includegraphics[width=0.4\textwidth]{Machine_learning_thesis/Images/deep learning and machine learning.png}
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/deep learning and machine learning.png}
     \caption{Artificial intelligence, machine learning and deep learning.} 
     \label{fig:Artificial intelligence, machine learning and deep learning} 
 \end{figure}
 
 \textbf{Perceptron}
 
-The perceptron, developed by Frank Rosenblatt in 1958 \cite{rosenblatt1958perceptron}, marked the birth of neural networks. It is the simplest form of neural network and corresponds to a single neuron that receives as input the values $(x_1, x_2, \dots, x_n)$ along the incoming connections, and returns an output value $f(x)$.
+The perceptron, developed by Frank Rosenblatt in 1958 \cite{rosenblatt1958perceptron}, marked the birth of neural networks. It is the simplest form of neural network and corresponds to a single neuron, specifically deisgned for binary classification problems, that receives as input the values $(x_1, x_2, \dots, x_n)$ along the incoming connections, and returns an output value $f(x)$.
 \begin{figure}[H] 
     \centering
     \includegraphics[width=0.4\textwidth]{Machine_learning_thesis/Images/Rosenblatt perceptron.png}
@@ -434,63 +432,302 @@ The perceptron, developed by Frank Rosenblatt in 1958 \cite{rosenblatt1958percep
     \label{fig:Rosenblatt perceptron} 
 \end{figure}
 Where the input values represent the values of the explanatory attributes and the output represent the prediction of the response variable $y$. The prediction for a new observation $x$ is then derived by performing the following steps:
-\begin{enumerate}
-    \item Each new observation $x = {x1, x2, \dots, xn}$ is associated with a weight $w = {w1, w2, \dots, wn}$ and a bias term $\theta$, called distortion. The perceptron firstly compute the \textbf{weighted linear combination} of the values of the explanatory variables for the new observation and the distortion is subtracted from it:
+
+\begin{tcolorbox} [colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{Perceptron algorithm | Part 1}
+        \label{alg: Rosenblatt perceptron}
+        \begin{enumerate}
+            \item Each new observation $x = \{x_1, x_2, \dots, x_n\}$ is associated with a weight $w = \{w_1, w_2, \dots, w_n\}$ and a bias term $\theta$, called distortion. The perceptron first computes the \textbf{weighted linear combination} of the values of the explanatory variables for the new observation, and the distortion is subtracted from it:
+            \[
+            w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta = \mathbf{w}' \mathbf{x} - \vartheta
+            \]
+            
+            \item The prediction $f(x)$ is then obtained by applying an \textbf{activation function} $g$ to the linear combination of the predictors:
+            \[
+            f(\mathbf{x}) = g(w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta) = g(\mathbf{w}' \mathbf{x} - \vartheta)
+            \]
+            The purpose of the activation function $g$ is to map the linear combination into the set $\mathcal{H} = \{v_1, v_2, \dots, v_h\}$ of the values assumed by the target variable, usually by means of a sigmoid profile. For binary classification problems, we have $\mathcal{H} = \{-1, 1\}$, so that one may select $g(\cdot) = \operatorname{sgn}(\cdot)$, making the prediction coincide with the sign of the weighted sum:
+            \[
+            f(\mathbf{x}) = \operatorname{sgn}(w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta) = g(\mathbf{w}' \mathbf{x} - \vartheta)
+            \]
+        \end{enumerate}
+    \end{algorithm}
+\end{tcolorbox}    
+
+\newpage
+    
+\begin{tcolorbox} [colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+    \setcounter{algorithm}{3}
+    \caption{Perceptron algorithm | Part 2}
+    \addtolength{\leftskip}{2em}
+        Where $g$ is the step function: 
+        \[
+        g(z) = 
+        \begin{cases} 
+              1 & \text{if } z \geq 0 \\
+             -1 & \text{if } z < 0 
+        \end{cases}
+        \]
+        In this case, the purpose of the activation function $g$ is to establish if the point associated with the example $x_i$ is placed in the lower or upper halfspace with respect to the separating hyperplane. Hence, the Rosenblatt perceptron corresponds to a linear separation of the observations based on the target class.
+        \begin{enumerate}
+        \setcounter{enumi}{2}  % Start the enumeration from 3
+            \item The model adjusts the weights, $\mathbf{w}$, of all the arcs and the bias, $\vartheta$, in order to minimize the error, $y_i - \hat{y}_i$, using the formulas:
+            \[
+            \mathbf{w_{t+1}} = \mathbf{w_t} + \eta (y_i - \hat{y}_i) \mathbf{x}_i
+            \]
+            \[
+            \vartheta = \vartheta - \eta (y_i - \hat{y}_i)
+            \]
+            Where $\eta$ represents the learning rate, controlling the magnitude of the adjustments and $\hat{y}_i = f(x_i)$ is the model's prediction.
+        \end{enumerate}
+    \end{algorithm}
+\end{tcolorbox}
+
+\textbf{Feed-forward neural network}
+
+A multi-level feed-forward neural network, shown in the figure below, is a more complex structure than the perceptron, which includes the following components:
+\begin{itemize}
+    \item \textbf{Input nodes}: receive as input the values of the explanatory attributes for each observation. Usually, the number of input nodes equals the number of explanatory variables.
+    \item \textbf{Hidden nodes}: apply given transformations to the input values inside the network. Each node is connected to incoming arcs that go from other hidden nodes or from input nodes, and it is connected with outgoing arcs to output nodes or to other hidden nodes.
+    \item \textbf{Output nodes}: receive connections from hidden nodes or from input nodes and return an output value that corresponds to the prediction of the response variable. In classification problems, there is usually only one output node.
+\end{itemize}
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/feed-forward neural network.png}
+    \caption{Feed-forward neural network.} 
+    \label{fig: Feed-forward neural network} 
+    \end{figure}
+Each node of the network basically operates as a perceptron, in the sense that given weights are associated with the input arcs, while each node is associated with a distortion coefficient and an activation function. Each node in a multi-layer neural network extends the capabilities of the original Rosenblatt perceptron by introducing several key innovations:
+\begin{itemize}
+    \item use of \textbf{gradient descent} to perform the adjustments of the weights of the archs and the bias of the nodes, an idea developed in 1986, presented in the paper "Learning representations by back-propagating errors" \cite{rumelhart1986learning}. Which can be summarized by the following steps:
+    
+    \begin{tcolorbox} [colback=blue!5, colframe=blue!80, boxrule=0pt]
+        \begin{algorithm} [H]
+        \setcounter{algorithm}{4}
+        \caption{Gradient descent algorithm | Part 1 }
+        \label{alg: gradient descent}
+        \begin{enumerate}
+            \item  the inputs are forward propagated through each neuron and an output is produced (see algoritm \ref{alg: Rosenblatt perceptron} for the forward pass trough a single neuron)
+            \item instead of using directly the error computed as $(y_i - \hat{y}_i)$ to update the weights of the model, a differentiable \textbf{loss function} $L(w)$, is computed, making it posible to apply the gradient descent optimization technique. A differentiable function is required because gradient-based optimization relies on the gradient, which are the partial derivatives of the loss function with respect to the model parameters. The gradient provides the direction in which the weights should be adjusted to minimize the loss function. For regression task the mean squared error (MSE) is typically used: 
+            \[
+            L(w) = \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+            \]
+        \end{enumerate}
+        \end{algorithm}
+    \end{tcolorbox}    
+
+\newpage
+    
+\begin{tcolorbox} [colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+    \setcounter{algorithm}{4}
+    \caption{Gradient descent algorithm| Part 2}
+    \begin{enumerate}
+    \setcounter{enumi}{2}
+            \item the gradients of the loss function $L(w)$ with respect to the parameters of the model are computed through a process called \textbf{backpropagation}, which involves computing the gradients starting form the output layer going back untill the input layer, through the following steps:
+            %\addtolength{\leftskip}{2em}
+            \begin{itemize}
+                \item the process begin by computing the gradients of the output layer based on the difference between the predicted output $\hat{y_i}$ and the actual target $y_i$, obtaining the error term $\delta_j^m$ ($m$ is the output layer and $j$ is the node):
+                \[
+                \delta_1^m = g_o'(a_1^m)(\hat{y}_d - y_d)
+                \]
+                Where $g_o'(\cdot)$ is the derivative of the output layer’s activation function and $a_1^m$ is the activation in the output layer.
+                \item For each hidden layer k, the error term $\delta_j^k$ is computed based on the error from the subsequent layer:
+                \[
+                \delta_j^k = g'(a_j^k) \sum_{l=1}^{r_{k+1}} w_{jl}^{k+1} \delta_l^{k+1}
+                \]
+                Where $w_{jl}^{k+1}$ represent the weight between neuron $j$ in layer $k$ and neuron $l$ in layer $K+1$, and $\delta_l^{k+1}$ is the error term from the next layer.
+
+                \item finally the gradients of the loss function with respect to the weights of the input layer are computed:
+                \[
+                \frac{\partial w_{ij}^k}{\partial L} = \delta_j^k \cdot o_i^{k-1}
+                \]
+                Where $o_i^{k-1}$ represent the input feature value
+            \end{itemize}
+            \item once all the gradients are computed, the weights of the model at each layer are updated using a gradient descent approach, the most common being: 
+            \[
+            w_{ij}^k \leftarrow w_{ij}^k - \eta \frac{\partial w_{ij}^k}{\partial L}
+            \]
+            Where $\eta$ is the earning rate, controlling the step size for each update.
+        \end{enumerate}
+        \end{algorithm}
+    \end{tcolorbox}
+
+
+    \item feed farward neural network employs more complex nonlinear activation functions, which ensure the model to capture complex patterns in data. Two of the most commonly used activation fuction for hidden layers are the ReLu (Rectified Linear Unit) and the Tanh (Hyperbolic Tangent) functions, whereas the Sigmoid and the Softmax funtion are typically used for the output nodes for classification problems, converting the otuputs of the nutwork into prediction probabilities:  
     \[
-    w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta = \mathbf{w}' \mathbf{x} - \vartheta
+    g(z) = \text{ReLU}(z) = \max(0, z)
     \]
-    \item The prediction $f(x)$ is then obtained by applying an \textbf{activation function} $g$ to the linear combination of the predictors, we get:
     \[
-    f(\mathbf{x}) = g(w_1 x_1 + w_2 x_2 + \dots + w_n x_n - \vartheta) = g(\mathbf{w}' \mathbf{x} - \vartheta)
-    \]
-    The activation function $g$ serves two purposes:
-    \begin{itemize}
-        \addtolength{\leftskip}{2em}
-        \item map the linear combination into the set $\mathcal{H} = {v1, v2, \dots, vn}$ of the values assumed by the target variable. 
-        \item introduce non-linearity to help the network learn complex representations. 
-    \end{itemize}
-    Two of the most commonly used activation fuction for hidden layers in multi-layer feed-forward networks (which will be described next) are the ReLu (Rectified Linear Unit) and the Tanh (Hyperbolic Tangent) functions, which can be described by the following equations:     
-    \[
-    f(z) = \max(0, z)
-    \]
-    \[
-    f(z) = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+    g(z) = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
     \]
     \begin{figure}[H] 
     \centering
-    \includegraphics[width=0.4\textwidth]{Machine_learning_thesis/Images/Tanh-and-ReLU-activation-functions.png}
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/Tanh-and-ReLU-activation-functions.png}
     \caption{Tanh and ReLU activation functions.} 
     \label{fig:Tanh and ReLU activation functions} 
+    \end{figure}
+
+    \[
+    \sigma(z) = \frac{1}{1 + e^{-z}}
+    \]
+    \[
+    g(z) = \text{softmax}(z) = \frac{e^{z}}{\sum_{j=1}^n e^{z}}
+    \]
+    \begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/sigmoid and softmax functions.png}
+    \caption{Sigmoid and Softamx activation functions.} 
+    \label{fig:Sigmoid and Softamx activation functions} 
+    \end{figure}
+    
+\end{itemize}
+
+\subsubsection{LSTM model}
+The \textbf{Long Short-Term Memory} (LSTM) model is a type of \textbf{Recurrent Neural Network} (RNN), originally introduced by  Sepp Hochreiter and Jürgen Schmidhuber in 1997 in the paper "Long Short-term Memory" \cite{hochreiter1997long}. The model was developed in order to address the limitation of traditionals RNN models. 
+
+\textbf{Recurrent Neural network}
+
+It's a type of artificial neural network specifically design for processing sequential data, where each input depends on previous elements in the sequence. Unlike traditional feed-forward neural networks where all  inputs and outputs are treated indipendently, RNN models introduce an \textbf{hidden state}, that retains some information from earlier steps in the sequence, allowing the model to "remember".
+\begin{figure}[H]
+    \begin{minipage}{0.3168\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Machine_learning_thesis/Images/FeedForward Neural Network.png}
+        \caption{Feed-forward neural network.}
+        \label{fig:image1}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.418\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Machine_learning_thesis/Images/Recurrent Neural Network.png}
+        \caption{Recurrent neural network.}
+        \label{fig:image2}
+    \end{minipage}
 \end{figure}
-    For binary classification problems it is possible to give a geometrical interpretation of the prediction obtained using a Rosenblatt perceptron. Indeed, if we place the �� observations of the training dataset in the space ℝ��, the weighted linear combination in (*) calculated for ����
-     expresses the slack between the observation and the hyperplane:
-     �� = ��1��1 + ��2��2 + ⋯ + �������� − �� = ��′�� − ��
-    The purpose of the activation function ��(·) = ������(·) is therefore to establish if the point associated with the example ���� is placed in the lower or upper halfspace with respect to the separating hyperplane. Hence, the Rosenblatt perceptron corresponds to a linear separation of the observations based on the target class. The aim of the iterative procedure is therefore to determine the coefficients of the separating hyperplane. 
+At each time step $t$, the hidden state $h_t$ is computed based on the current input $x_t$ and the previous hidden state $h_{t-1}$ as illustrated by the following formula:
+\[
+h_t = \sigma\left(W_{xh} x_t + W_{hh} h_{t-1} + b_h\right)
+\]
+Where: 
+\begin{itemize}
+    \item $W_{xh}$ is the weight matrix governing the connections from the hidden layer to itself (recurrent connections)
+    \item $W_{hh}$ is the weight matrix governing the connections from the input to the hidden layer
+    \item $b_h$ is the bias vector
+    \item $\sigma$ is the activation function (typically ReLu or tahn)
+\end{itemize}
+The output at each time step, $y_t$, is then computed  based on the hidden state output using the following formula:
+\[
+\hat{y}_t = f\left(V \cdot h_t + c\right)
+\]
+Where: 
+\begin{itemize}
+    \item $V$ is the weight matrix governing the connections from the hidden layer to the output layer
+    \item $c$ is the bias vector
+\end{itemize}
+However RNN models, struggle with long-term dependencies due to issues like the \textbf{vanishing gradient} problem, which consists in gradients becoming too small during backpropagation, making it hard to retain information from earlier steps. Another common problem is the \textbf{exploding gradient} problem, where gradients become excessively large during backpropagation causing the model's parameters to update erratically leading to instbility and the model to deviate from the optimal solution and making it difficult for the network to converge to global minima.
 
-\end{enumerate}
+\textbf{Long Short-Term Memory}
+
+The LSTM model is a modified version of recurrent neural networks,that addresses key limitations in handling long-term dependencies. The core of the model is the \textbf{Cell state}, which serves as a long-term memory for the model carrying the information straight through the network, from one time step to the next.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/LSTM cell.png}
+    \caption{Long Short Memory cell.} 
+    \label{fig:LSTM cell} 
+\end{figure}
+The models uses gates to manage the flow of information, within the cell state, enabling it to selectively retain, update, or discard information at each time step, as a result, not all time-steps are incorporated equally into the cell state. To perform this the model employs three gates:
+\begin{itemize}
+    \item \textbf{Forget gate}: looks at the current input and the previous hidden state (which carries past information, acting as a short-term memory for the model) and decides what information to forget, giving an output that goes from 0 (completely forget) to 1 (retain everything), it is computed as: 
+    \[
+    f_t = \sigma\left(W_f \cdot \left[h_{t-1}, x_t\right] + b_f\right)
+    \]
+    \item \textbf{Input gate}: determines what new information should be added to the cell state by giving an output that goes form 0 to 1, indicating how much information should be stored. Firstly it creates a new candidate set of information determined as: 
+    \[
+    \tilde{C}_t = \tanh\left(W_C \cdot \left[h_{t-1}, x_t\right] + b_C\right)
+    \]
+    and then chooses which parts of this will be added to the cell state, using the formula:
+    \[
+    i_t = \sigma\left(W_i \cdot \left[h_{t-1}, x_t\right] + b_i\right)
+    \]
+    \item \textbf{Output Gate}: controls what part of the cell state gets passed to the hidden state for the next time step, also returning an output from 0 to 1, using the formula:
+    \[
+    o_t = \sigma\left(W_o \cdot \left[h_{t-1}, x_t\right] + b_o\right)
+    \]
+\end{itemize}
+
+This three gates are then employed to update both the hidden state and the cell state, respectivelly using the formulas:
+\[
+h_t = o_t \cdot \tanh(C_t)
+\]
+\[
+C_t = f_t \cdot C_{t-1} + i_t \cdot \tilde{C}_t
+\]
+
+\subsubsection{1D CNN model for time series}
+\textbf{Convolutionary neural network} are another popular class of artificial neural netowrk, introduced for the first time by Yann LeCun, during the development of the \textbf{LeNet} architecture\cite{lecun1989generalization}. The model was initially developed for image classification tasks, since it has the ability to learn spatial hierarchies in data through local receptive fields and weight sharing. 
+
+\textbf{CNN model for images}
+
+At the heart of CNNs is a mathematical operation called \textbf{convolution}, which is an operation that combines an input $I$ with a \textbf{kernel} $K$ (a filter) to produce feature maps that highlight specific data patterns. The  convolutional operation $S$ on a 2-D image e may be describe
+as follows \cite{lecun1989generalization}:
+\[
+S(i, j) = (I \times K)(i, j) = \sum_m \sum_n I(m, n) K(i - m, j - n)
+\]
+The operation slides the kernel across the input data, generating outputs based on localized interactions, as shown in the figure below.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/Convolution.png}
+    \caption{Example of a convolutional operation.} 
+    \label{fig:convolution} 
+\end{figure}
+Usually after a convolution process a \textbf{pooling} operation is performed in sequence, which involve sliding a n-dimensional filter over each channel of the feature map generated by the convolutional operation, summarizing the features lying within the region covered by the filter. This is done to  reduce the number of parameters the model has to learn and the amount of computation performed in the network, making the model more robust to variations in the position of the features in the input image. The two common pooling methods are:
+\begin{itemize}
+    \item \textbf{Max Pooling}: which takes the maximum value from each region, capturing the most prominent feature in that region:
+    \[
+    y_{i,j} = \max(x_{2i:2i+2, 2j:2j+2})
+    \]
+    \item \textbf{Average Pooling}: which computes the average of values in each region:
+    \[
+    y_{i,j} = \frac{1}{4} \sum_{m=0}^{1} \sum_{n=0}^{1} x_{2i+m, 2j+n}
+    \]
+\end{itemize}
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/Max pooling and Average pooling.png}
+    \caption{Example of Max pooling and Average pooling operations.} 
+    \label{fig:Max pooling and Average pooling} 
+\end{figure}
+Finally a dropout layer is often applied to avoid model overfitting. In the \textbf{dropout} operation, each hidden unit have some probability $p$ of being omitted
+during the model training. In more modern approaches, different groups of hidden units have different probabilities of being omitted during training, the so-called biased dropout operation.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/Dropout.png}
+    \caption{Regular dropout and Biased dropout layers example.} 
+    \label{fig:Regular dropout and Biased dropout} 
+\end{figure}
 
 
-
-Neural networks were first proposed in 1944 by Warren McCullough and Walter Pitts, two University of Chicago researchers 
-
-\section{Modern Ensemble Techniques in Time Series} % Section 2.2
+\section{Ensemble Techniques in Time Series} 
 \label{Sec: ensemble learning}
-
-\subsection{Stacking and Blending Methods} % Subsection 2.2.1
+\subsection{Stacking and Blending Methods} 
 % Content for stacking and blending methods
-
-\subsection{Recent Research on Hybrid Deep Learning Models} % Subsection 2.2.2
+\subsection{Hybrid Approaches in Time Series Forecasting}
 % Content for hybrid deep learning models
-
-\subsection{Integrating Classical and Deep Learning Models} % Subsection 2.2.3
+\subsection{Integrating Classical and Deep Learning Models}
 % Content for integrating models
 
-\section{Gaps in Existing Research and the Need for Hybrid Solutions} % Section 2.3
-\subsection{Addressing Non-stationarity and Volatility} % Subsection 2.3.1
-% Content for non-stationarity and volatility
 
-\subsection{Capturing Complex Temporal Dependencies} % Subsection 2.3.2
+
+
+
+
+\section{Gaps in Existing Research and the Need for Hybrid Solutions} 
+\subsection{Addressing Non-stationarity and Volatility}
+% Content for non-stationarity and volatility
+\subsection{Capturing Complex Temporal Dependencies} 
 % Content for temporal dependencies
 
-\subsection{The Role of Attention Mechanisms and Transformers} % Subsection 2.3.3
-% Content for attention mechanisms and transformers
+
+

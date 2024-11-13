@@ -56,7 +56,8 @@
 
 % PACKAGES FOR ALGORITHMS (PSEUDO-CODE)
 \usepackage{algorithm}
-\usepackage{algorithmic}
+%\usepackage{algorithmic}
+\usepackage{algpseudocode} 
 
 % PACKAGES FOR REFERENCES & BIBLIOGRAPHY
 \usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref} % Adds clickable links at references
@@ -101,6 +102,10 @@
 
 \usepackage{enumitem}
 
+%\usepackage{algpseudocode}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+
 %----------------------------------------------------------------------------
 %	ADD YOUR DEFINITIONS AND COMMANDS (be careful of existing commands)
 %----------------------------------------------------------------------------
@@ -139,6 +144,8 @@
 %----------------------------------------------------------------------------
 %	PREAMBLE PAGES: ABSTRACT 
 %----------------------------------------------------------------------------
+\startpreamble
+\setcounter{page}{1} % Set page counter to 1
 
 \input{Machine_learning_thesis/chapters/Abstract}
 
@@ -170,9 +177,9 @@
 
 \input{Machine_learning_thesis/chapters/Literature Review}
 
-\input{Machine_learning_thesis/chapters/Problem definition}
-
 \input{Machine_learning_thesis/chapters/Methodology}
+
+\input{Machine_learning_thesis/chapters/Discussion of the results}
 
 \input{Machine_learning_thesis/chapters/Results and Discussion}
 
