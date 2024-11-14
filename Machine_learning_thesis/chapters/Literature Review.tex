@@ -205,7 +205,7 @@ Classical time series model, such as ARIMA and GARCH, often require specific sta
 
 \subsubsection{Random Forest}
 \label{Sec: Random Forest}
-A Random Forest model, also referred to as Random Decision Forest, is an ensemble learning model (which will be discussed in more details in the section \ref{Sec: ensemble learning}), introduced for the first time by Ho in 1995 \cite{Ho1995}, however it was Breiman who significantly advanced the methodology in 2001 \cite{Breiman2001} publishing a version that is modified and being currently used. The model developed by Leo Breiman consists of a group of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is then made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble. Each tree is grown as described:
+A \textbf{Random Forest} model, also referred to as Random Decision Forest, is an ensemble learning model (which will be discussed in more details in the section \ref{Sec: ensemble learning}), introduced for the first time by Ho in 1995 \cite{Ho1995}, however it was Breiman who significantly advanced the methodology in 2001 \cite{Breiman2001} publishing a version that is modified and being currently used. The model developed by Leo Breiman consists of a group of un-pruned classification or regression trees made from the random selection of samples of the training data. Random features are selected in the induction process. Prediction is then made by aggregating (majority vote for classification or averaging for regression) the predictions of the ensemble. Each tree is grown as described:
 \begin{itemize}
 \item \textbf{Random Sampling with Replacement}: N instances will be randomly sampled from the original dataset, with replacement, meaning that some instances may appear multiple times in a single sample, while others may be omitted. This sample will then be used as the training set for growing the tree.
 \item \textbf{Random Feature Selection (Feature Bagging)}: For M input variables, a subset of features m is selected (such that $m<<M$) at each split for each tree, the best split will be then selected using the m features instead of the whole M input variables. This will reduce the correlation between trees making the ensemble more robust to noise.
@@ -315,7 +315,7 @@ The process can be summirez by the following algorithm:
 \end{tcolorbox}
 
 \subsubsection{XGBoost}
-
+\label{sec:Gradient Boosting}
 \textbf{Gradient Boosting} is an ensemble machine learning technique, developed by \textbf{Jerome H. Friedman}, a statistician at Stanford University, who formalized the concept in his 2001 paper, "Greedy Function Approximation: A Gradient Boosting Machine." \cite{Friedman2001}, that consist in building multiple weak learners sequentially (typically decision trees), with each new model correcting the errors of its predecessor by placing more weights on instances with erroneous predictions, gradually minimizing a loss function. Friedman’s Gradient Boosting algorithm, often called the \textbf{Gradient Boosting Machine} (GBM), uses the gradient of a loss function, $\psi(y, f)$, to guide the correction process, iteratively estimating new models in order to optimize the predictions and minimize the loss. At each step the algorithm compute the \textbf{negative gradient} of the loss function with respect to the current model $f_{t-1}(x)$ to obtain the residual errors. This negative gradient, $g_t(x_i)$, represent the the direction in which the model should adjust to reduce loss:
 \[
     g_t(x_i) = -\left.\frac{\partial \psi(y_i, f(x_i))}{\partial f(x_i)}\right|_{f(x_i) = f_{t-1}(x_i)}
@@ -670,12 +670,11 @@ C_t = f_t \cdot C_{t-1} + i_t \cdot \tilde{C}_t
 
 \textbf{CNN model for images}
 
-At the heart of CNNs is a mathematical operation called \textbf{convolution}, which is an operation that combines an input $I$ with a \textbf{kernel} $K$ (a filter) to produce feature maps that highlight specific data patterns. The  convolutional operation $S$ on a 2-D image e may be describe
-as follows \cite{lecun1989generalization}:
+At the heart of CNNs is a mathematical operation called \textbf{convolution}, which is an operation that combines an input $I$ with a \textbf{kernel} $K$ (a filter) to produce feature maps that highlight specific data patterns. The  convolutional operation $S$ on a 2-D image may be describe as follows \cite{lecun1989generalization}:
 \[
 S(i, j) = (I \times K)(i, j) = \sum_m \sum_n I(m, n) K(i - m, j - n)
 \]
-The operation slides the kernel across the input data, generating outputs based on localized interactions, as shown in the figure below.
+The kernel slides slides across the input data performing a dot product between the kernel and the local region of the image, generating outputs based on localized interactions, as shown in the figure below.
 \begin{figure}[H] 
     \centering
     \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/Convolution.png}
@@ -699,7 +698,7 @@ Usually after a convolution process a \textbf{pooling} operation is performed in
     \caption{Example of Max pooling and Average pooling operations.} 
     \label{fig:Max pooling and Average pooling} 
 \end{figure}
-Finally a dropout layer is often applied to avoid model overfitting. In the \textbf{dropout} operation, each hidden unit have some probability $p$ of being omitted
+Another componet is the dropout layer, which is often applied during the training of the model to avoid overfitting. In the \textbf{dropout} layer, each hidden unit have some probability $p$ of being omitted
 during the model training. In more modern approaches, different groups of hidden units have different probabilities of being omitted during training, the so-called biased dropout operation.
 \begin{figure}[H] 
     \centering
@@ -707,15 +706,130 @@ during the model training. In more modern approaches, different groups of hidden
     \caption{Regular dropout and Biased dropout layers example.} 
     \label{fig:Regular dropout and Biased dropout} 
 \end{figure}
+After the convolution and pooling operations, the output feature maps are typically passed through one or more fully connected layers to compute the final output $z$:
+\[
+\mathbf{z} = \sigma(\mathbf{W} \mathbf{x} + \mathbf{b})
+\]
 
 
-\section{Ensemble Techniques in Time Series} 
+\section{Ensemble Techniques} 
 \label{Sec: ensemble learning}
-\subsection{Stacking and Blending Methods} 
-% Content for stacking and blending methods
-\subsection{Hybrid Approaches in Time Series Forecasting}
+Is a machine learning approach (introduce in Section \ref{Sec: Random Forest} and \ref{sec:Gradient Boosting}) that combines multiple models to improve the accuracy, robustness, and generalizability of predictions. Many techniques have been proposed during the years in this section we will describe some of the most famous ones.
+
+\subsection{Boosting}
+The theoretical groundwork for the boosting algorithm as its roots in the work of Michael Kearns and Leslie Valiant, who were the first to pose the question of whether a “weak” learning algorithm, which performs just slightly better than random guessing, can be “boosted” into an arbitrarily accurate “strong” learning algorithm. The main idea in Boosting is to assign to each observation in the dataset a relative weight and train each model sequentially so that each new model attempts to correct the errors made by the previous ones. At the beginning of the algorithm to each observation is assigned the same weight, but as the algorithm progress more weight are assigned to instances that previous models predicted incorrectly and less weight to the correctly predicted istances, allowing the new model to focus on the most difficult cases. Two of the most popuar implementation of the boosting ensemble technique are Gradient Boosting (explained in Section \ref{sec:Gradient Boosting} and \textbf{AdaBoost}, developed in 1995 by Freund and Schapire \cite{freund1997desicion}, which can be summarized by the following steps:
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{Boosting algorithm | Part 1}
+        \label{alg:Boosting algorithm}
+        \textbf{Input:}
+        \begin{itemize}
+            \item Training set: ${(x_1, y_1),\dots,(x_m, y_m)}$
+        \end{itemize}
+        \textbf{Initialize:}
+        \begin{itemize}
+            \item Model weights: $D_1(i)= \frac{1}{m}$ for $i=1, \dots, m$
+        \end{itemize}
+        \textbf{Algorithm:}
+        
+        For $t = 1$ to $T$:
+        \begin{enumerate}
+             \item Train weak learner $h_t(x)$ using the distribution $D_t$
+            \item Compute the error rate of the weak learner: 
+            \[
+            \epsilon_t = \frac{\sum_{i} D_t(i) \cdot (y_i - h_t(x_i))^2}{\sum_{i} D_t(i)}
+            \]
+            \end{enumerate}
+    \end{algorithm}
+\end{tcolorbox}
+
+\newpage
+
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+    \setcounter{algorithm}{5}
+        \caption{Boosting algorithm | Part 2}
+        \begin{enumerate}
+        \setcounter{enumi}{2}
+            \item Compute the weight of the weak learner:
+            \[
+            \alpha_t = \frac{1}{2} \log \left( \frac{1 - \epsilon_t}{\epsilon_t} \right)
+            \]
+            \item Update the distribution weights for the next iteration:
+            \[
+            D_{t+1}(i) = D_t(i) \cdot \frac{\exp( -\alpha_t y_i h_t(x_i)}{Z(i)} )
+            \]
+            where $Z(i)$ is a normalization factor (chosen so that ,$D_{t+1}(i)$ will be a distribution
+        \end{enumerate}
+        \textbf{Final model:}
+        \[
+        H(x) = \sum_{t=1}^{T} \alpha_t \cdot h_t(x)
+        \]
+        \textbf{Output:} Final prediction model $H(x)$
+    \end{algorithm}
+\end{tcolorbox}
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/Boosting.png}
+    \caption{Boosting architecture.} 
+    \label{fig:Boosting} 
+\end{figure}
+
+\newpage
+
+\subsection{Bagging}
+This technique was introduced by Leo Breiman in 1996 in the paper "Bagging predictors" \cite{breiman1996bagging} as a way to reduce the variance of "unstable" predictors, thereby enhancing its accuracy and robustness. The idea behind this strategy is to train multiple predictor $c_1, c_2, \dots, c_m$ (usually of the same type) on different subsets of the training data $S_1, \dots, S_m$, generated using \textbf{bootstraping}, a resampling method that uses random sampling with replacement. The final prediction is then obtained by aggregating the outputs of all the individual models, typically using voting for classification or averaging for regression. The algorithm proposed by the original paper consists of the following steps: 
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{Bagging algorithm}
+        \label{alg:Bagging algorithm}
+        \textbf{Input:}
+        \begin{itemize}
+            \item Dataset $D$: ${(x_1, y_1),\dots,(x_m, y_m)}$
+            \item Base learning algorithm $L$
+        \end{itemize}
+        \textbf{Algorithm:}
+        
+        For $k = 1$ to $K$:
+        \begin{enumerate}
+             \item  Generate a bootstrap sample $D_k$ by sampling with replacement from $D$.
+             \[
+             D_k = Bootsrap (D)
+             \]
+            \item Train a base model $c_k$ on $D_k$:
+            \[
+            c_k = L(D_k)
+            \]
+        \end{enumerate}
+        \textbf{Output:}
+        \[
+        H(x) = \sum_{t=1}^{T} \alpha_t \cdot h_t(x)
+        \]
+        the value of $l(a)$ is 1 if $a$ is true and 0 otherwise.
+    \end{algorithm}
+\end{tcolorbox}
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.40\textwidth]{Machine_learning_thesis/Images/Bagging.png}
+    \caption{Bagging architecture.} 
+    \label{fig:Bagging} 
+\end{figure}
+
+\subsection{Stacking}
+
+
+
+\subsection{Meta learner approaches}
+
+
+
+%\subsection{Hybrid Approaches in Time Series Forecasting}
 % Content for hybrid deep learning models
-\subsection{Integrating Classical and Deep Learning Models}
+
+
+
+%\subsection{Integrating Classical and Deep Learning Models}
 % Content for integrating models
 
 
@@ -723,10 +837,10 @@ during the model training. In more modern approaches, different groups of hidden
 
 
 
-\section{Gaps in Existing Research and the Need for Hybrid Solutions} 
-\subsection{Addressing Non-stationarity and Volatility}
+%\section{Gaps in Existing Research and the Need for Hybrid Solutions} 
+%\subsection{Addressing Non-stationarity and Volatility}
 % Content for non-stationarity and volatility
-\subsection{Capturing Complex Temporal Dependencies} 
+%\subsection{Capturing Complex Temporal Dependencies} 
 % Content for temporal dependencies
 
 
