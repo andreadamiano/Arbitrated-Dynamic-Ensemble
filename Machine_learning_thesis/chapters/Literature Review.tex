@@ -816,11 +816,99 @@ This technique was introduced by Leo Breiman in 1996 in the paper "Bagging predi
     \label{fig:Bagging} 
 \end{figure}
 
+\newpage
+
 \subsection{Stacking}
+\label{sec: Stacking}
+Stacking, or \textbf{Stacked Generalization}, is an ensemble learning technique, introduced by Wolpert in his seminal paper "Stacked Generalization" (1992) \cite{wolpert1992stacked}. Unlike bagging and boosting, the goal in stacking is to ensemble strong, diverse sets of learners together by employing a \textbf{meta-learner} to find the optimal combination of the base learners. This is the pseudo-code of the ensemble strategy:
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{Stacking algorithm}
+        \label{alg:Stacking algorithm}
+        \textbf{Input:}
+        \begin{itemize}
+            \item Dataset $D$: ${(x_1, y_1),\dots,(x_m, y_m)}$
+            \item Base learning algorithm $L_t$ with $t = 1,2,\dots,T$
+            \item Meta learning algorithm $L$
+        \end{itemize}
+        \textbf{Algorithm:}
+        
+        For $t = 1$ to $T$:
+        \begin{enumerate}
+             \item Train base leamers $h_t = L(D_t)$
+             \item For each example $(x_i, y_i) \in D$, generate the meta-features by computing the predictions from each base learner $z_it = h_t(x_i)$ 
+        \item Use the meta-features as input to train the meta-learning algorithm $h'$ on the meta-features datset $D'$:
+        \[
+        h' = L(D')
+        \]
+    \end{enumerate}   
+    \textbf{Output:}
+    \[
+    H(x) = h'(h_1(x), h_2(x), \dots, h_T(x))
+    \]
+    \end{algorithm}
+\end{tcolorbox}
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.5\textwidth]{Machine_learning_thesis/Images/Stacking.png}
+    \caption{Stacking architecture.} 
+    \label{fig: Stacking} 
+\end{figure}
 
 
+\subsection{Dynamic ensemble techniques}
+Unlike static ensemble techniques (like the one presented previously), where the contribution of each base models is pre-defined and remains fixed throughout the process, dynamic ensembles adapt in real-time, by dynamically adjusting the contribution of each individual model in the ensemble based on the specific characteristics of new data points or changing patterns in the data. This technique is particularly advantageous in time-varying domains like financial time series, where patterns and relationships can shift frequently. 
 
-\subsection{Meta learner approaches}
+\subsubsection{Arbitrated Dynamic Ensemble}
+The \textbf{Arbitrated Dynamic Ensemble} (ADE) is a dynamic ensemble technique, developed in the paper "Arbitrated Ensemble for Time Series Forecasting" \cite{cerqueira2017arbitrated}, which relies on a \textbf{meta-models} to combine the predictions of each base model of the ensemble. This strategy relies on the assumption that even the best performing models may not perform consistently well throughout the forecast horizon (this idea is in accordance with findings reported in prior
+work \cite{aiolfi2006persistence}), for this reason a meta-model is trained to estimate the level of competence of each base model for a query sample and leverage this "localized expertise" to generate a combined forecast for the next pocket of time. ADE at his core is a combiation of two static ensemble techniques: Weighted Average, which as the name suggest combine the predictions of the base models by taking their weighted average, $p = w_1 p_1 + w_2 p_2 + \cdots + w_n p_n$,  and Stacking (previously described at Section \ref{sec: Stacking}). However, these weights instead of being static, are dynamically estimated by the predictions of the meta-learners. The scheme of the workflow of ADE for a new prediction can be summarized by the image provided by the original paper.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/ADE schema.png}
+    \caption{ADE workflow to generate a new prediction.} 
+    \label{fig:ADE} 
+\end{figure}
+The prediction process is defined by the following steps: 
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, boxrule=0pt]
+    \begin{algorithm} [H]
+        \caption{ADE prediction process | Part 1
+        }
+        \label{alg:ADE}
+        \textbf{Inputs:}
+        \begin{itemize}
+            \item $K$: number of previous time steps used for time delay embedding
+            \item $M$: set of base forecasting models, $M_1, \dots, M_m$, to predict the next time step
+            \item $Z$: set of meta-models, $Z_1, \dots, Z_z$, to evaluate the competence of each base model
+            \item $\alpha$: number of top base models to consider in the ‘committee’ of models
+            \item $\Omega$: length of time in recent history to consider for evaluating the average error metric of all base models
+        \end{itemize}
+        \textbf{Algorithm:}
+        \begin{enumerate}
+            \item Embed the previous $K_1$ time steps into $Y_{t+1}^K$
+            \item Get meta-predictions $\hat{e}_{t+1}^j$ from $Z^j \in {}^\alpha Z$
+            \item Compute weights $w_{j}^{t+1} = \frac{\exp(-\hat{e}_{j}^{t+1})}{\sum_{Z_j \in \alpha Z} \exp(-\hat{e}_{j}^{t+1})}$
+            \item Get predictions $\hat{y}_{t+1}^j$ 1 from models $M^j \in {}^\alpha M$
+            \item : Compute final prediction $y_{t+1} = \sum_{j=1}^{m} \hat{y}^{j}_{t+1} \cdot w_{j}^{t+1}$
+            \item Add $y_{t+1}$ to $Y_ts$
+            \item Update Committees ${}^\alpha M$ and ${}^\alpha Z$ according to $\alpha$ and $\Omega$
+            \item Return $\hat{y}_{t+1}$ and go back to the metalearning step 
+        \end{enumerate}
+    \end{algorithm}
+\end{tcolorbox}
+
+
+\section{Hybrid Modeling Technique}
+Hybrid models are combinations of two or more machine learning techniques. These models are more robust as they often compliment the advantages of the individual techniques involved and improve the forecasting accuracy. The goal is to create a more powerful and generalized model by integrating the outputs of various models, often leading to better predictive performance compared to single-model approaches. Although hybrid models may seem similar to ensemble models, they have some key differences. Specifically, hybrid models typically utilize: 
+\begin{itemize}
+    \item different types of learning algorithms 
+    \item different types of data 
+    \item different approaches within a single model, such as feature selection, dimensionality reduction, and classification/regression algorithms.
+\end{itemize}
+
+\subsection{Residual learning}
+The concept of residual learning was first formalized in the boosting algorithm \cite{Friedman2001} (described at Section \ref{sec:Gradient Boosting}), where the models iteratively learn to minimize residual errors. In the context of hybrid modelling, residual learning is used to address the limitations of a primary model by learning and modeling its errors (residuals) using a secondary model,  which the primary model could not effectively learn  achieving greater accuracy and robustness. This approach is particularly useful when the primary model struggles with certain aspects of the data, such as non-linear relationships, complex interactions, or noise. In time series prediction this technique is widely used to combine statistical and machine learning models \cite{wang2018hybrid}, \cite{khashei2011hybridization}, \cite{liu2020arima_lstm}.
+
 
 
 

@@ -12,3 +12,41 @@ https://machinelearningmastery.com/how-to-develop-convolutional-neural-network-m
 
 How to implement classical statistical models 
 https://www.kaggle.com/code/konradb/ts-3-time-series-for-finance#ARCH
+
+
+
+
+
+
+
+
+
+
+The statement that "having normally distributed errors is equivalent to having normally distributed observations for any linear time series model" hinges on the properties of linear models and the assumption of normally distributed residuals (errors).
+
+In a linear regression or time series model, the observations (response variable) are modeled as a combination of the deterministic part (based on predictors or covariates) and a stochastic part (the error term). The key assumption is that the error terms are normally distributed, i.e., they follow a Gaussian distribution with a mean of zero and a constant variance.
+
+When the errors are normally distributed, the entire distribution of the observed values (the dependent variable) will also be normal, under certain conditions. This is because the model assumes that the observed value is a linear function of the predictors plus a random noise term. Since the error term is normally distributed, the sum of a normal distribution (the linear part of the model) and a normal error term will also be normally distributed. This implies that the observed outcomes themselves will follow a normal distribution, provided the underlying assumptions of the model are met, such as the linearity and independence of errors​
+BOOKDOWN
+​
+MATHWORKS - MAKER OF MATLAB AND SIMULINK
+.
+
+For time series models, the residuals are expected to be normally distributed for proper inference (e.g., hypothesis testing or confidence intervals for model coefficients). If the errors are non-normal, the model's estimations may still be unbiased, but the significance tests may become unreliable. Therefore, normality in the residuals ensures that the model's predictions and the statistical inference based on these predictions are valid​
+MATHWORKS - MAKER OF MATLAB AND SIMULINK
+.
+
+This connection between error distribution and observation distribution is vital in linear regression and time series modeling because the assumption of normality in the residuals often underlies many of the common statistical tests and procedures used to validate these models.
+
+
+
+https://medium.com/@preeti.rana.ai/hybrid-classifiers-time-series-forecasting-88594988cc44
+
+
+https://github.com/nikkizhao1202/Trading_Strategy_SP500/blob/master/LSTM.ipynb
+
+
+https://colab.research.google.com/github/Dzy-HW-XD/Hybrid-Arima-LSTM/blob/main/Hybird_ARIMA_LSTM.ipynb
+
+mukltivariate time series analysis 
+https://www.analyticsvidhya.com/blog/2018/09/multivariate-time-series-guide-forecasting-modeling-python-codes/
