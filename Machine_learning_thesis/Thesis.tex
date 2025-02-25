@@ -102,6 +102,23 @@
 
 \usepackage{enumitem}
 
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    breaklines=true,
+    frame=single
+}
+
 %\usepackage{algpseudocode}
 %\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 
@@ -180,8 +197,6 @@
 \input{Machine_learning_thesis/chapters/Methodology}
 
 \input{Machine_learning_thesis/chapters/Discussion of the results}
-
-\input{Machine_learning_thesis/chapters/Results and Discussion}
 
 \input{Machine_learning_thesis/chapters/Conclusion}
 
