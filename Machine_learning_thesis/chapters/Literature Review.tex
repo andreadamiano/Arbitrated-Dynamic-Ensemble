@@ -861,12 +861,13 @@ Stacking, or \textbf{Stacked Generalization}, is an ensemble learning technique,
 Unlike static ensemble techniques (like the one presented previously), where the contribution of each base models is pre-defined and remains fixed throughout the process, dynamic ensembles adapt in real-time, by dynamically adjusting the contribution of each individual model in the ensemble based on the specific characteristics of new data points or changing patterns in the data. This technique is particularly advantageous in time-varying domains like financial time series, where patterns and relationships can shift frequently. 
 
 \subsubsection{Arbitrated Dynamic Ensemble}
+\label{Arbitrated Dynamic Ensemble}
 The \textbf{Arbitrated Dynamic Ensemble} (ADE) is a dynamic ensemble technique, developed in the paper "Arbitrated Ensemble for Time Series Forecasting" \cite{cerqueira2017arbitrated}, which relies on a \textbf{meta-models} to combine the predictions of each base model of the ensemble. This strategy relies on the assumption that even the best performing models may not perform consistently well throughout the forecast horizon (this idea is in accordance with findings reported in prior
 work \cite{aiolfi2006persistence}), for this reason a meta-model is trained to estimate the level of competence of each base model for a query sample and leverage this "localized expertise" to generate a combined forecast for the next pocket of time. ADE at his core is a combiation of two static ensemble techniques: Weighted Average, which as the name suggest combine the predictions of the base models by taking their weighted average, $p = w_1 p_1 + w_2 p_2 + \cdots + w_n p_n$,  and Stacking (previously described at Section \ref{sec: Stacking}). However, these weights instead of being static, are dynamically estimated by the predictions of the meta-learners. The scheme of the workflow of ADE for a new prediction can be summarized by the image provided by the original paper.
 \begin{figure}[H] 
     \centering
     \includegraphics[width=0.6\textwidth]{Machine_learning_thesis/Images/ADE schema.png}
-    \caption{ADE workflow to generate a new prediction.} 
+    \caption{ADE workflow to ensemble predictions.} 
     \label{fig:ADE} 
 \end{figure}
 The prediction process is defined by the following steps: 
